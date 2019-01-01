@@ -1,0 +1,50 @@
+	/* File: {PS_file_name} *****************************************************
+	* PS_file_name - name of the PowerShell Script,
+	* PS_file_desc - description of a given PowerShell Script in general,
+	*
+	* PowerShell Script file may consist of many functions:
+	* fun<FID>_scope - scope of a given function with a given <FID>:
+	* - global,
+	* - script,
+	* - local,
+	* - private,
+	* fun<FID>_name - name of a function with the identifier <FID>,
+	* fun<FID>_desc - description of a given function with a given <FID>,
+	* where <FID> is a 0-based index.
+	* 
+	* PowerShell Script function may accept multiple parameters:
+	* fun<FID>par<PID>_required - is parameter with <PID> of a function with a given <FID> is required,
+	* fun<FID>par<PID>_type - a type of parameter with <PID> of a function with a given <FID>,
+	* fun<FID>par<PID>_name - name of a parameter with <PID> of a function with a given <FID>,
+	* where <PID> is a 0-based index.
+	*
+	*/
+	// File description node
+	"[DESC]{PS_file_name}" [
+		shape = note
+		style = filled
+		fillcolor = "#e0feff"
+		label = "{PS_file_desc}"
+	];
+
+{{funtion_description_nodes}}
+
+	// File definition node
+	"{PS_file_name}" [
+		label = <
+			<table border="1" cellborder="1" cellspacing="0">
+				<tr>
+					<td colspan="3" border="2" bgcolor="#e0feff">{PS_file_name}</td>
+				</tr>
+			
+{{function_html_definitions}}
+			</table>
+		>
+	];
+
+	// File definition edges
+	"[DESC]{PS_file_name}" -> "{PS_file_name}";
+
+{{function_description_edge_definitions}}
+	
+	/* End of File: {PS_file_name} **********************************************/

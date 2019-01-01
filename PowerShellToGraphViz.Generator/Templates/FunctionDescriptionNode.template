@@ -1,0 +1,6 @@
+	"[DESC][{PS_file_name}]::{fun<FID>_name}" [
+		shape = note
+		style = filled
+		fillcolor = "#fffee0"
+		label = "{fun<FID>_desc}"
+	];

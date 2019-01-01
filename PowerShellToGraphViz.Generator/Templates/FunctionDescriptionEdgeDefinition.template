@@ -1,0 +1,2 @@
+	"[DESC][{PS_file_name}]::{fun<FID>_name}" -> 
+		"{PS_file_name}":"{fun<FID>_name}";
