@@ -4,13 +4,13 @@ namespace PowerShellToGraph.Parser
 {
     public static class PsTokens
     {
-        public const string TRUE_TOKEN = "$true";
-        public const string SYNOPSIS_TOKEN = ".SYNOPSIS";
-        public const string IMPORT_FUNCTION_TOKEN = "Import-Function";
-        public const string PARAMETER_TOKEN = "Parameter";
+        public const string TRUE_LOWER_TOKEN = "$true";
+        public const string SYNOPSIS_LOWER_TOKEN = ".synopsis";
+        public const string IMPORT_FUNCTION_LOWER_TOKEN = "import-function";
+        public const string PARAMETER_LOWER_TOKEN = "parameter";
 
-        public const string PARAMETER_ATTR_MANDATORY_TOKEN = "Mandatory";
-        public const string PARAMETER_ATTR_SWITCH_TOKEN = "Switch";
+        public const string PARAMETER_ATTR_MANDATORY_LOWER_TOKEN = "mandatory";
+        public const string PARAMETER_ATTR_SWITCH_LOWER_TOKEN = "switch";
 
         public static string GetTokenFormat(string text)
         {

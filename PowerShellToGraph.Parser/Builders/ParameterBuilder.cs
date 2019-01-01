@@ -12,23 +12,23 @@ namespace PowerShellToGraph.Parser.Builders
 
         public ParameterBuilder(ParameterAst parameter)
         {
-            name = parameter.Extent.Text;
+            name = parameter.Name.Extent.Text;
             type = IsSwitch(parameter)
-                ? PsTokens.PARAMETER_ATTR_SWITCH_TOKEN
+                ? PsTokens.PARAMETER_ATTR_SWITCH_LOWER_TOKEN
                 : parameter.StaticType.Name;
         }
 
         private bool IsSwitch(ParameterAst parameter)
         {
             TypeConstraintAst switchAttr = (TypeConstraintAst)parameter.Attributes
-                .Where(a => PsTokens.IsEqual(a.TypeName.Name, PsTokens.PARAMETER_ATTR_SWITCH_TOKEN))
+                .Where(a => PsTokens.IsEqual(a.TypeName.Name, PsTokens.PARAMETER_ATTR_SWITCH_LOWER_TOKEN))
                 .FirstOrDefault();
             return switchAttr != null;
         }
 
         public ParameterBuilder IsRequired(NamedAttributeArgumentAst parameterArgument)
         {
-            required = PsTokens.IsEqual(parameterArgument.Argument, PsTokens.TRUE_TOKEN);
+            required = PsTokens.IsEqual(parameterArgument.Argument, PsTokens.TRUE_LOWER_TOKEN);
             return this;
         }
 

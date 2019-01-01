@@ -3,6 +3,7 @@ using PowerShellToGraphViz.Extensions.Management.Automation.Language;
 using PowerShellToGraphViz.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Management.Automation.Language;
 using System.Text.RegularExpressions;
@@ -50,69 +51,43 @@ namespace PowerShellToGraph.Parser
                             ParameterBuilder parameterBuilder = new ParameterBuilder(parameter);
                             AttributeAst parameterAttributes = GetAttributes(parameter);
 
-                            foreach (var parameterArgument in parameterAttributes.NamedArguments)
+                            if (parameterAttributes != null)
                             {
-                                string argumentName = PsTokens.GetTokenFormat(parameterArgument.ArgumentName);
-                                switch (argumentName)
+                                foreach (var parameterArgument in parameterAttributes.NamedArguments)
                                 {
-                                    case PsTokens.PARAMETER_ATTR_MANDATORY_TOKEN:
-                                        parameterBuilder = parameterBuilder.IsRequired(parameterArgument);
-                                        break;
+                                    string argumentName = PsTokens.GetTokenFormat(parameterArgument.ArgumentName);
+                                    switch (argumentName)
+                                    {
+                                        case PsTokens.PARAMETER_ATTR_MANDATORY_LOWER_TOKEN:
+                                            parameterBuilder = parameterBuilder.IsRequired(parameterArgument);
+                                            break;
+                                    }
                                 }
+                                functionParamList.Add(parameterBuilder.Build());
                             }
-                            functionParamList.Add(parameterBuilder.Build());
                         }
                     }
+
+
+                    functionDefinitions[functionDef.GetFunctionLocalName()].Parameters = functionParamList;
                 }
-                //foreach (FunctionDefinitionAst fun in functions)
-                //{
 
-                //    IList<Parameter> parameterList = new List<Parameter>();
-                //    var name = fun.Name;
+                foreach (FunctionDefinitionAst functionDef in functionDefList)
+                {
+                    var dependsOnList = new List<Dependency>();
+                    foreach (string import in importList)
+                    {
+                        if (functionDef.Body.Extent.Text.Contains(import))
+                        {
+                            dependsOnList.Add(new Dependency(import));
+                        }
+                    }
 
-                //    if (name.Contains(':'))
-                //    {
-                //        name = name.Substring(name.IndexOf(':') + 1);
-                //    }
-                //    if (fun.Body.ParamBlock != null)
-                //    {
-                //        var parameters = fun.Body.ParamBlock.Parameters;
-
-                //        foreach (ParameterAst parameter in parameters)
-                //        {
-                //            var paramIsReq = false;
-
-                //            AttributeAst parameterAttr = (AttributeAst)parameter.Attributes.Where(a => a.TypeName.Name.ToLower().Equals("parameter")).FirstOrDefault();
-                //            if (parameterAttr != null)
-                //            {
-                //                var val = parameterAttr.NamedArguments.Where(a => a.ArgumentName.ToLower().Equals("mandatory")).FirstOrDefault();
-                //                var str = val.Argument.ToString();
-                //                paramIsReq = val.Argument.ToString().Equals("$true");
-                //                var paramName = parameter.Name.Extent.Text;
-                //                var paramType = parameter.StaticType.Name;
-                //                parameterList.Add(new Parameter(paramIsReq, paramType, paramName));
-                //            }
-                //            TypeConstraintAst switchAttr = (TypeConstraintAst)parameter.Attributes.Where(a => a.TypeName.Name.ToLower().Equals("switch")).FirstOrDefault();
-                //            if (switchAttr != null)
-                //            {
-                //                parameterList.Add(new Parameter(false, "switch", parameter.Name.Extent.Text));
-                //            }
-                //        }
-                //    }
-                //    IList<Dependency> dependsOnList = new List<Dependency>();
-
-                //    foreach (string import in imports)
-                //    {
-                //        if (fun.Body.Extent.Text.Contains(import))
-                //        {
-                //            dependsOnList.Add(new Dependency(import));
-                //        }
-                //    }
-
-                //    functionDefinitions[name].Parameters = parameterList;
-                //    functionDefinitions[name].DependsOn = dependsOnList;
-                //    }
-                //    powerShellScriptDef = new NodeTemplate(Path.GetFileNameWithoutExtension(powerShellFilePath), functionDefinitions.Values.ToList()); ;
+                    functionDefinitions[functionDef.GetFunctionLocalName()].DependsOn = dependsOnList;
+                }
+                powerShellScriptDef = new NodeTemplate(
+                    Path.GetFileNameWithoutExtension(powerShellFilePath), 
+                    functionDefinitions.Values.ToList());
             }
 
             return powerShellScriptDef;
@@ -121,7 +96,7 @@ namespace PowerShellToGraph.Parser
         private static AttributeAst GetAttributes(ParameterAst parameter)
         {
             return (AttributeAst)parameter.Attributes
-                .Where(a => PsTokens.IsEqual(a.TypeName.Name, PsTokens.PARAMETER_TOKEN))
+                .Where(a => PsTokens.IsEqual(a.TypeName.Name, PsTokens.PARAMETER_LOWER_TOKEN))
                 .FirstOrDefault();
 
         }
@@ -168,7 +143,7 @@ namespace PowerShellToGraph.Parser
         private static IList<string> GetImports(IReadOnlyCollection<StatementAst> statements)
         {
             return GetDefinitions<PipelineAst, string>(statements,
-                s => PsTokens.StartsWith(s, PsTokens.IMPORT_FUNCTION_TOKEN),
+                s => PsTokens.StartsWith(s, PsTokens.IMPORT_FUNCTION_LOWER_TOKEN),
                 s =>
                 {
                     string import = s.Extent.Text.TrimEnd();
@@ -233,7 +208,7 @@ namespace PowerShellToGraph.Parser
 
         private static bool ContainsSynopsisBlock(string text)
         {
-            return PsTokens.Contains(text, PsTokens.SYNOPSIS_TOKEN);
+            return PsTokens.Contains(text, PsTokens.SYNOPSIS_LOWER_TOKEN);
         }
 
         private static string GetSynopsisFromString(string functionDocComment)
