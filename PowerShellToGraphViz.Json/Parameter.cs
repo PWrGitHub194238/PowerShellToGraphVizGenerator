@@ -1,4 +1,6 @@
-﻿namespace PowerShellToGraphViz.Json
+﻿using System;
+
+namespace PowerShellToGraphViz.Json
 {
     public class Parameter
     {
@@ -10,6 +12,13 @@
             set => type = value;
         }
         public string Name { get; set; }
+
+        public Parameter(Type type, string name)
+        {
+            Reqiuired = false;
+            Type = type.Name;
+            Name = name;
+        }
 
         public Parameter(bool reqiuired, string type, string name)
         {

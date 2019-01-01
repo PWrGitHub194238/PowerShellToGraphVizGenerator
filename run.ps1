@@ -1,19 +1,23 @@
-[string]$repoDir = "C:\Users\strza\source"
-[string]$projDir = "C:\Users\strza\source\PowerShellToGraphVizGenerator"
-[string]$package = "C:\Users\strza\source\PowerShellToGraphVizGenerator\PowerShell\PowerShellMigrationSitecorePackage\Content Package-1"
-[string]$outDir = "$projDir\Published"
+[string]$repoDir = (Get-Item -Path ".\..").FullName
+[string]$projDir = [IO.Path]::Combine($repoDir, 
+    "VisualStudio\PowerShellToGraphVizGenerator")
+[string]$sitecorePckageDir = [IO.Path]::Combine($repoDir, 
+    "Sitecore\PowerShellMigrationSitecorePackage\Content Package-1")
+[string]$projOutDir = [IO.Path]::Combine($projDir, "Published")
+[string]$graphOutDir = [IO.Path]::Combine($repoDir, "Wiki")
+[string]$graphOutName = "SitecorePowerShellExtensionGraph"
+
 [string]$dot = "C:\Program Files (x86)\Graphviz2.38\bin\dot.exe"
 
-Remove-Item $outDir -Recurse -Force > $null
-New-Item -ItemType Directory -Path $outDir > $null
+Remove-Item $projOutDir -Recurse -Force > $null
+New-Item -ItemType Directory -Path $projOutDir > $null
 
-dotnet clean > $null
-dotnet restore > $null
-dotnet build > $null
+dotnet clean $projDir
+dotnet restore $projDir
+dotnet build $projDir
 dotnet publish $projDir\PowerShellToGraphViz.Generator\PowerShellToGraphViz.Generator.csproj `
     --configuration Release `
-    --output $outDir `
-    --verbosity quiet > $null
+    --output $projOutDir
 
-. $outDir\PowerShellToGraphViz.Generator.exe "$($package)\Script Library\TS_Migration\Functions"
-. $dot -Tsvg "$outDir\SitecorePowerShellExtensionGraph.dot" -o "$repoDir\SitecorePowerShellExtensionGraph.svg"
+dotnet $projOutDir\PowerShellToGraphViz.Generator.dll "$sitecorePckageDir"
+. $dot -Tsvg "$projOutDir\SitecorePowerShellExtensionGraph.dot" -o "$graphOutDir\$graphOutName.svg"

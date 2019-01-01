@@ -8,9 +8,4 @@
     <PackageReference Include="System.Management.Automation" Version="6.1.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\PowerShellToGraphViz.Extensions\PowerShellToGraphViz.Extensions.csproj" />
-    <ProjectReference Include="..\PowerShellToGraphViz.Json\PowerShellToGraphViz.Model.csproj" />
-  </ItemGroup>
-
 </Project>
