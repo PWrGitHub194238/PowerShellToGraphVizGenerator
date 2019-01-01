@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PowerShellToGraphVizGenerator.Templates
+﻿namespace PowerShellToGraphVizGenerator.Templates
 {
     public static class TemplateTags
     {
@@ -13,7 +9,5 @@ namespace PowerShellToGraphVizGenerator.Templates
         public const string FUNCTION_PARAM_IS_REQUIRED = "{fun<FID>par<PID>_required}";
         public const string FUNCTION_PARAM_TYPE = "{fun<FID>par<PID>_type}";
         public const string FUNCTION_PARAM_NAME = "{fun<FID>par<PID>_name}";
-
-
     }
 }

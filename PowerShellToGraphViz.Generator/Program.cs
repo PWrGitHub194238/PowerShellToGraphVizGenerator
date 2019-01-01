@@ -75,8 +75,8 @@ namespace PowerShellToGraphVizGenerator
                 if (powerShellScriptDef != null)
                 {
                     powerShellScriptDefinitionDict.Add(
-                    powerShellScriptFileName,
-                    powerShellScriptDef);
+                        powerShellScriptFileName,
+                        powerShellScriptDef);
                 }
             }
             return powerShellScriptDefinitionDict;

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Management.Automation.Language;
-using System.Text;
+﻿using System.Management.Automation.Language;
 
 namespace PowerShellToGraphViz.Extensions.Management.Automation.Language
 {
@@ -18,6 +15,12 @@ namespace PowerShellToGraphViz.Extensions.Management.Automation.Language
         {
             string functionFullName = functionDefinitionAst.Name;
             return functionFullName.Substring(functionFullName.IndexOf(':') + 1);
+        }
+
+        public static bool DependsOn(this FunctionDefinitionAst functionDefinitionAst,
+            string dependencyFunctionName)
+        {
+            return functionDefinitionAst.Body.Extent.Text.Contains(dependencyFunctionName);
         }
     }
 }

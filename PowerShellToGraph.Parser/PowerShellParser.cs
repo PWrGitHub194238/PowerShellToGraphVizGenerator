@@ -23,8 +23,6 @@ namespace PowerShellToGraph.Parser
             NodeTemplate powerShellScriptDef = null;
             if (TryParse(powerShellFilePath, out IReadOnlyCollection<StatementAst> statements, out Token[] tokens))
             {
-
-
                 IList<FunctionDefinitionAst> functionDefList = GetFunctions(
                     statements: statements);
 
@@ -38,59 +36,95 @@ namespace PowerShellToGraph.Parser
 
                 AddImportsWithinFunctions(GetImports: importList, functionDefinitions: functionDefinitions);
 
-                foreach (FunctionDefinitionAst functionDef in functionDefList)
-                {
-                    IList<Parameter> functionParamList = new List<Parameter>();
+                AddParametersToFunctions(functionDefList: functionDefList,
+                    functionDefinitions: functionDefinitions);
 
-                    if (FunctionHasParameters(functionDef: functionDef))
-                    {
-                        IReadOnlyCollection<ParameterAst> parameters = functionDef.Body.ParamBlock.Parameters;
+                AddDependenciesToFunctions(importList: importList, functionDefList: functionDefList,
+                    functionDefinitions: functionDefinitions);
 
-                        foreach (ParameterAst parameter in parameters)
-                        {
-                            ParameterBuilder parameterBuilder = new ParameterBuilder(parameter);
-                            AttributeAst parameterAttributes = GetAttributes(parameter);
-
-                            if (parameterAttributes != null)
-                            {
-                                foreach (var parameterArgument in parameterAttributes.NamedArguments)
-                                {
-                                    string argumentName = PsTokens.GetTokenFormat(parameterArgument.ArgumentName);
-                                    switch (argumentName)
-                                    {
-                                        case PsTokens.PARAMETER_ATTR_MANDATORY_LOWER_TOKEN:
-                                            parameterBuilder = parameterBuilder.IsRequired(parameterArgument);
-                                            break;
-                                    }
-                                }
-                                functionParamList.Add(parameterBuilder.Build());
-                            }
-                        }
-                    }
-
-
-                    functionDefinitions[functionDef.GetFunctionLocalName()].Parameters = functionParamList;
-                }
-
-                foreach (FunctionDefinitionAst functionDef in functionDefList)
-                {
-                    var dependsOnList = new List<Dependency>();
-                    foreach (string import in importList)
-                    {
-                        if (functionDef.Body.Extent.Text.Contains(import))
-                        {
-                            dependsOnList.Add(new Dependency(import));
-                        }
-                    }
-
-                    functionDefinitions[functionDef.GetFunctionLocalName()].DependsOn = dependsOnList;
-                }
                 powerShellScriptDef = new NodeTemplate(
-                    Path.GetFileNameWithoutExtension(powerShellFilePath), 
+                    Path.GetFileNameWithoutExtension(powerShellFilePath),
                     functionDefinitions.Values.ToList());
             }
 
             return powerShellScriptDef;
+        }
+
+        private static void AddDependenciesToFunctions(IList<string> importList,
+            IList<FunctionDefinitionAst> functionDefList,
+            IDictionary<string, Function> functionDefinitions)
+        {
+            foreach (FunctionDefinitionAst functionDef in functionDefList)
+            {
+                AddDependenciesToFunction(importList: importList,
+                    functionDefinitions: functionDefinitions,
+                    functionDefinition: functionDef);
+            }
+        }
+
+        private static void AddDependenciesToFunction(IList<string> importList,
+            IDictionary<string, Function> functionDefinitions,
+            FunctionDefinitionAst functionDefinition)
+        {
+            string functionName = functionDefinition.GetFunctionLocalName();
+
+            if (functionDefinitions.ContainsKey(functionName))
+            {
+                IList<Dependency> functionDependencyList = new List<Dependency>();
+                foreach (string import in importList)
+                {
+                    if (functionDefinition.DependsOn(import))
+                    {
+                        functionDependencyList.Add(new Dependency(import));
+                    }
+                }
+
+                functionDefinitions[functionName].DependsOn = functionDependencyList;
+            }
+        }
+
+        private static void AddParametersToFunctions(IList<FunctionDefinitionAst> functionDefList,
+            IDictionary<string, Function> functionDefinitions)
+        {
+            foreach (FunctionDefinitionAst functionDef in functionDefList)
+            {
+                AddParametersToFunction(functionDefinition: functionDef,
+                    functionDefinitions: functionDefinitions);
+            }
+        }
+
+        private static void AddParametersToFunction(FunctionDefinitionAst functionDefinition,
+            IDictionary<string, Function> functionDefinitions)
+        {
+            IList<Parameter> functionParamList = new List<Parameter>();
+            string functionName = functionDefinition.GetFunctionLocalName();
+
+            if (functionDefinitions.ContainsKey(functionName) && FunctionHasParameters(functionDef: functionDefinition))
+            {
+                IReadOnlyCollection<ParameterAst> parameters = functionDefinition.Body.ParamBlock.Parameters;
+
+                foreach (ParameterAst parameter in parameters)
+                {
+                    ParameterBuilder parameterBuilder = new ParameterBuilder(parameter);
+                    AttributeAst parameterAttributes = GetAttributes(parameter);
+
+                    if (parameterAttributes != null)
+                    {
+                        foreach (var parameterArgument in parameterAttributes.NamedArguments)
+                        {
+                            string argumentName = PsTokens.GetTokenFormat(parameterArgument.ArgumentName);
+                            switch (argumentName)
+                            {
+                                case PsTokens.PARAMETER_ATTR_MANDATORY_LOWER_TOKEN:
+                                    parameterBuilder = parameterBuilder.IsRequired(parameterArgument);
+                                    break;
+                            }
+                        }
+                        functionParamList.Add(parameterBuilder.Build());
+                    }
+                }
+                functionDefinitions[functionName].Parameters = functionParamList;
+            }
         }
 
         private static AttributeAst GetAttributes(ParameterAst parameter)

@@ -1,7 +1,6 @@
 ﻿using PowerShellToGraphViz.Json;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace PowerShellToGraphVizGenerator.Templates
 {
@@ -37,8 +36,8 @@ namespace PowerShellToGraphVizGenerator.Templates
             filledTemplate = filledTemplate.Replace(TemplateTags.FUNCTION_NAME, _functionName);
 
             filledTemplate = FillTemplateUtils.FillByList(
-                inputString: filledTemplate, 
-                templateItemList: _functionParameterHtmlDefinitions, 
+                inputString: filledTemplate,
+                templateItemList: _functionParameterHtmlDefinitions,
                 templatePlaceholderName: FUNCTION_PARAMETER_DEFS);
 
             return filledTemplate;
