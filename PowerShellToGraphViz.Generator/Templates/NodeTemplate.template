@@ -19,13 +19,6 @@
 	* where <PID> is a 0-based index.
 	*
 	*/
-	// File description node
-	"[DESC]{PS_file_name}" [
-		shape = note
-		style = filled
-		fillcolor = "#e0feff"
-		label = "{PS_file_desc}"
-	];
 
 {{funtion_description_nodes}}
 
@@ -35,15 +28,11 @@
 			<table border="1" cellborder="1" cellspacing="0">
 				<tr>
 					<td colspan="3" border="2" bgcolor="#e0feff">{PS_file_name}</td>
-				</tr>
-			
+				</tr>			
 {{function_html_definitions}}
 			</table>
 		>
 	];
-
-	// File definition edges
-	"[DESC]{PS_file_name}" -> "{PS_file_name}";
 
 {{function_description_edge_definitions}}
 	

@@ -1,6 +1,6 @@
-        <tr>
-	        <td colspan="3" bgcolor="#fffee0" port="{fun<FID>_name}">
-		        {fun<FID>_scope}:{fun<FID>_name}
-	        </td>
-        </tr>
+				<tr>
+					<td colspan="3" bgcolor="#fffee0" port="{fun<FID>_name}">
+						{fun<FID>_scope}:{fun<FID>_name}
+					</td>
+				</tr>
 {{function_parameter_html_definitions}}

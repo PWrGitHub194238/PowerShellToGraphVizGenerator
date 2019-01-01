@@ -3,7 +3,7 @@ using System.IO;
 
 namespace PowerShellToGraphVizGenerator.Templates
 {
-    public class FunctionParameterHtmlDefinition
+    public class FunctionParameterHtmlDefinition : DotTemplateItem
     {
         public static readonly string Template = File.ReadAllText(
             Path.Combine(Program.basePath, Program.TEMPLATES_DIR, "FunctionParameterHtmlDefinition.template"));
@@ -24,7 +24,7 @@ namespace PowerShellToGraphVizGenerator.Templates
             _name = name;
         }
 
-        public string FillTemplate()
+        public override string FillTemplate()
         {
             string filledTemplate = Template;
 

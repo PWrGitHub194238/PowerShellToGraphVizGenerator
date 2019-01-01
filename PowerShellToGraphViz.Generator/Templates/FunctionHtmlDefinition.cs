@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PowerShellToGraphVizGenerator.Templates
 {
-    public class FunctionHtmlDefinition
+    public class FunctionHtmlDefinition : DotTemplateItem
     {
         private const string FUNCTION_PARAMETER_DEFS = "{{function_parameter_html_definitions}}";
 
@@ -29,20 +29,17 @@ namespace PowerShellToGraphVizGenerator.Templates
             }
         }
 
-        public string FillTemplate()
+        public override string FillTemplate()
         {
             string filledTemplate = Template;
 
             filledTemplate = filledTemplate.Replace(TemplateTags.FUNCTION_SCOPE, _functionScope);
             filledTemplate = filledTemplate.Replace(TemplateTags.FUNCTION_NAME, _functionName);
 
-            StringBuilder sb = new StringBuilder();
-
-            foreach (var functionParameterHtmlDefinition in _functionParameterHtmlDefinitions)
-            {
-                sb.AppendLine(functionParameterHtmlDefinition.FillTemplate());
-            }
-            filledTemplate = filledTemplate.Replace(FUNCTION_PARAMETER_DEFS, sb.ToString());
+            filledTemplate = FillTemplateUtils.FillByList(
+                inputString: filledTemplate, 
+                templateItemList: _functionParameterHtmlDefinitions, 
+                templatePlaceholderName: FUNCTION_PARAMETER_DEFS);
 
             return filledTemplate;
         }

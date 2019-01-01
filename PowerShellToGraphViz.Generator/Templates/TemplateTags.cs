@@ -7,7 +7,6 @@ namespace PowerShellToGraphVizGenerator.Templates
     public static class TemplateTags
     {
         public const string PS_FILE_NAME = "{PS_file_name}";
-        public const string PS_FILE_DESCRIPTION = "{PS_file_desc}";
         public const string FUNCTION_SCOPE = "{fun<FID>_scope}";
         public const string FUNCTION_NAME = "{fun<FID>_name}";
         public const string FUNCTION_DESCRIPTION = "{fun<FID>_desc}";

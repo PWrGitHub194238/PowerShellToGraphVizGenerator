@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphViz.NET" Version="1.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\PowerShellToGraph.Parser\PowerShellToGraph.Parser.csproj" />
     <ProjectReference Include="..\PowerShellToGraphViz.Json\PowerShellToGraphViz.Model.csproj" />
   </ItemGroup>

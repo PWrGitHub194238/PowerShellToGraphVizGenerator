@@ -2,7 +2,7 @@
 
 namespace PowerShellToGraphVizGenerator.Templates
 {
-    public class FunctionDescriptionEdgeDefinition
+    public class FunctionDescriptionEdgeDefinition : DotTemplateItem
     {
         public static readonly string Template = File.ReadAllText(
             Path.Combine(Program.basePath, Program.TEMPLATES_DIR, "FunctionDescriptionEdgeDefinition.template"));
@@ -16,7 +16,7 @@ namespace PowerShellToGraphVizGenerator.Templates
             _functionName = functionName;
         }
 
-        public string FillTemplate()
+        public override string FillTemplate()
         {
             string filledTemplate = Template;
 

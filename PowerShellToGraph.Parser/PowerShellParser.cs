@@ -110,7 +110,7 @@ namespace PowerShellToGraph.Parser
             }
 
 
-            return new NodeTemplate(Path.GetFileNameWithoutExtension(powerShellFilePath), "", functionDefinitions.Values.ToList());
+            return new NodeTemplate(Path.GetFileNameWithoutExtension(powerShellFilePath), functionDefinitions.Values.ToList());
         }
     }
 }
