@@ -11,7 +11,6 @@ namespace PowerShellToGraphVizGenerator
     public class Program
     {
         private const string POWER_SHELL_FILE_FILTER = "*.ps1";
-        private const string GRAPH_OUTPUT_FILE_NAME = "SitecorePowerShellExtensionGraph.dot";
         private const string DOT_GRAPH_FORMAT = "digraph G {{\n\tnode[ shape = plaintext ];\n\n{0}\n{1}\n\n}}";
 
         public const string TEMPLATES_DIR = "Templates";
@@ -20,11 +19,13 @@ namespace PowerShellToGraphVizGenerator
 
         private static void Main(string[] args)
         {
+            string outputDirectory = args[0];
+            string[] inputDirectoryArray = args.AsSpan().Slice(1).ToArray();
             IDictionary<string, NodeTemplate> powerShellScriptDefinitionDict = ParsePowerShellScripts(
-                powerShellScriptFileSet: GetScriptFilesFromArguments(args)
+                powerShellScriptFileSet: GetScriptFilesFromArguments(inputDirectoryArray)
             );
 
-            File.WriteAllText(Path.Combine(basePath, GRAPH_OUTPUT_FILE_NAME),
+            File.WriteAllText(Path.Combine(basePath, outputDirectory),
                 ToDotString(powerShellScriptDefinitionDict));
         }
 
